@@ -11,6 +11,8 @@ export default function Visualizer() {
       arr.push(Math.floor(Math.random() * 100) + 5);
     }
     setArray(arr);
+    console.log('reset random array:');
+    console.log(array.toString());
   };
 
   // update default array from random arrayfor the first time
@@ -19,7 +21,48 @@ export default function Visualizer() {
   }, []);
   // WHY use useEffect won't cause too many re-renders error?
 
-  // show random array on page in bars
+  const swap = (arr, xp, yp) => {
+    var temp = arr[xp];
+    arr[xp] = arr[yp];
+    arr[yp] = temp;
+  };
+
+  // sorting algorithm
+  const bubbleSort = () => {
+    console.log('bubble sort');
+    console.log('unsorted array:');
+    console.log(array.toString());
+    var i, j;
+    for (i = 0; i < array.length - 1; i++) {
+      for (j = 0; j < array.length - i - 1; j++) {
+        if (array[j] > array[j + 1]) {
+          swap(array, j, j + 1);
+        }
+      }
+    }
+    console.log('sorted array:');
+    console.log(array.toString());
+  };
+
+  // test results
+  const testSort = () => {
+    console.log('test result:');
+    let testResult = false;
+    const testArr = [...array];
+    testArr.sort();
+    if (testArr.length !== array.length) {
+      return;
+    } else {
+      for (let i = 0; i < testArr.length; i++) {
+        if (testArr[i] !== array[i]) {
+          return;
+        }
+        testResult = true;
+      }
+    }
+    console.log(testResult.toString());
+  };
+
   return (
     <div>
       Visualizer
@@ -36,6 +79,11 @@ export default function Visualizer() {
             ></div>
           );
         })}
+      </div>
+      <div className='button-container'>
+        <button onClick={randomArray}>Reset Array</button>
+        <button onClick={bubbleSort}>Bubble Sort</button>
+        <button onClick={testSort}>Test</button>
       </div>
     </div>
   );

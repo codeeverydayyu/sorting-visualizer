@@ -13,3 +13,10 @@
   margin: 0 1pt;
   background-color: gainsboro;
 }
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1rem;
+}
