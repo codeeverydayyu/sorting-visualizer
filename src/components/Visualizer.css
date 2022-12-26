@@ -1,0 +1,15 @@
+.sortingBars-container {
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 1;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.bar {
+  width: 10px;
+  display: inline-block;
+  margin: 0 1pt;
+  background-color: gainsboro;
+}
