@@ -52,28 +52,26 @@ export default function Visualizer() {
 
   // test results
   const testSort = () => {
-    let testResult = false;
     const testArr = structuredClone(array);
     testArr.sort((a, b) => a - b);
-    if (testArr.length === array.length) {
-      for (let i = 0; i < testArr.length; i++) {
-        if (testArr[i] !== array[i]) {
-          break;
-        }
-        testResult = true;
-      }
-    }
-    console.log('test result: ', testResult.toString());
-  };
-
-  const setBubbleSort = () => {
-    setSortFunction('bubbleSort');
+    // console.log('inside testSort:');
+    // console.log('testArr length: ', testArr.length);
+    // console.log('array length: ', array.length);
+    // console.log('testArr: ', testArr);
+    // console.log('array: ', array);
+    let testResult = arrayEqual(testArr, array);
+    console.log('Test result is:', testResult);
+    // console.log('--------------------------------');
   };
 
   const chooseSort = () => {
+    setDisableButton(true);
     switch (sortFunction) {
       case 'bubbleSort':
         bubbleSort();
+        break;
+      case 'insertionSort':
+        insertionSort();
         break;
       default:
         break;
@@ -88,7 +86,6 @@ export default function Visualizer() {
 
   // Bubble sort algorithm
   const bubbleSort = async () => {
-    setDisableButton(true);
     let bar1, bar2;
     for (let i = 0; i < array.length - 1; i++) {
       for (let j = 0; j < array.length - i - 1; j++) {
@@ -110,8 +107,13 @@ export default function Visualizer() {
         // swap elements and update array's changes to the state, the height of both bars will change accordingly
         if (array[j] > array[j + 1]) {
           swap(array, j, j + 1);
-          setArray([...array, array]);
-          // FIXME: after swap, the render div will increase one more div than the number of array length, push the whole bars one bar to the right
+          setArray([...array]); //deep copy
+          /* setArray([...array, array]);
+          result:[array, [array]]. 
+          why using this statement will add [array] to the end of the array, 
+          while console.log in this funcion, every thing is fine, no other element is added.
+          Note: Array.toString() will not print out nested symbol, must use only console.log(Array) to show nested structure.*/
+          // console.log(`[${i}] [${j}]: `, array);
 
           // after the swap, bar2 must be larger,
           // if in slow speed, highlight bar2 to larger color and bar1 to comparison color for a few milliseconds.
@@ -130,11 +132,19 @@ export default function Visualizer() {
       bar2.backgroundColor = SORTED_COLOR;
       await sleep(speed);
     }
+
     // the element is in its sorted position, change color to sorted
     if (typeof bar1 !== 'undefined') {
       bar1.backgroundColor = SORTED_COLOR;
     }
     // console.log('after bubble sort, the length of array is: ', array.length);
+    setDisableButton(false);
+    // console.log('end: ', array);
+  };
+
+  const insertionSort = async () => {
+    console.log('choose insertion sort');
+
     setDisableButton(false);
   };
 
@@ -144,8 +154,19 @@ export default function Visualizer() {
         <button onClick={randomArray} disabled={disapleButton}>
           Genarate random array
         </button>
-        <button onClick={setBubbleSort} disabled={disapleButton}>
+        <button
+          value={'bubbleSort'}
+          onClick={(e) => setSortFunction(e.target.value)}
+          disabled={disapleButton}
+        >
           Bubble sort
+        </button>
+        <button
+          value={'insertionSort'}
+          onClick={(e) => setSortFunction(e.target.value)}
+          disabled={disapleButton}
+        >
+          Insertion sort
         </button>
         <button onClick={testSort}>Test</button>
         <button onClick={slowSpeed} disabled={disapleButton}>
@@ -154,8 +175,12 @@ export default function Visualizer() {
         <button onClick={defaultSpeed} disabled={disapleButton}>
           Default speed
         </button>
-        <button onClick={chooseSort} disabled={disapleButton}>
-          Sort
+        <button
+          onClick={chooseSort}
+          disabled={disapleButton}
+          style={{ color: 'red' }}
+        >
+          Sort!
         </button>
       </div>
 
@@ -193,10 +218,30 @@ export default function Visualizer() {
                 style={{
                   height: `${element}px`,
                 }}
-              ></div>
+              >
+                {element}
+              </div>
             );
           })}
       </div>
     </div>
   );
+}
+
+function arrayEqual(array1, array2) {
+  // console.log('inside arrayEqual:');
+  // console.log('array1 length: ', array1.length);
+  // console.log('array2 length: ', array2.length);
+  if (array1.length !== array2.length) {
+    return false;
+  }
+  for (let i = 0; i < array1.length; i++) {
+    if (array1[i] !== array2[i]) {
+      return false;
+    }
+    // console.log('i is: ', i);
+    // console.log('array1[i] is: ', array1[i]);
+    // console.log('array2[i] is: ', array2[i]);
+  }
+  return true;
 }
