@@ -1,3 +1,10 @@
+.colorSystem-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1rem;
+}
+
 .sortingBars-container {
   display: flex;
   flex-grow: 1;
