@@ -13,6 +13,8 @@ export default function Visualizer() {
   const [arraySize, setArraySize] = useState(INITIAL_ARRAYSIZE);
   const [array, setArray] = useState([]);
   const [speed, setSpeed] = useState(DEFAULT_SPEED);
+  const [sortFunction, setSortFunction] = useState('');
+  const [disapleButton, setDisableButton] = useState(false);
 
   // generate a random array
   const randomArray = () => {
@@ -64,6 +66,20 @@ export default function Visualizer() {
     console.log('test result: ', testResult.toString());
   };
 
+  const setBubbleSort = () => {
+    setSortFunction('bubbleSort');
+  };
+
+  const chooseSort = () => {
+    switch (sortFunction) {
+      case 'bubbleSort':
+        bubbleSort();
+        break;
+      default:
+        break;
+    }
+  };
+
   const swap = (arr, x, y) => {
     var temp = arr[x];
     arr[x] = arr[y];
@@ -72,6 +88,7 @@ export default function Visualizer() {
 
   // Bubble sort algorithm
   const bubbleSort = async () => {
+    setDisableButton(true);
     let bar1, bar2;
     for (let i = 0; i < array.length - 1; i++) {
       for (let j = 0; j < array.length - i - 1; j++) {
@@ -117,18 +134,31 @@ export default function Visualizer() {
     if (typeof bar1 !== 'undefined') {
       bar1.backgroundColor = SORTED_COLOR;
     }
-    console.log('after bubble sort, the length of array is: ', array.length);
+    // console.log('after bubble sort, the length of array is: ', array.length);
+    setDisableButton(false);
   };
 
   return (
     <div>
       <div className='button-container'>
-        <button onClick={randomArray}>Genarate random array</button>
-        <button onClick={bubbleSort}>Bubble sort</button>
+        <button onClick={randomArray} disabled={disapleButton}>
+          Genarate random array
+        </button>
+        <button onClick={setBubbleSort} disabled={disapleButton}>
+          Bubble sort
+        </button>
         <button onClick={testSort}>Test</button>
-        <button onClick={slowSpeed}>Slow speed</button>
-        <button onClick={defaultSpeed}>Default speed</button>
+        <button onClick={slowSpeed} disabled={disapleButton}>
+          Slow speed
+        </button>
+        <button onClick={defaultSpeed} disabled={disapleButton}>
+          Default speed
+        </button>
+        <button onClick={chooseSort} disabled={disapleButton}>
+          Sort
+        </button>
       </div>
+
       <div className='colorSystem-container'>
         <div
           key={'unsorted'}
