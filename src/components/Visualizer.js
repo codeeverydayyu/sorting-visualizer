@@ -185,27 +185,37 @@ export default function Visualizer() {
       </div>
 
       <div className='colorSystem-container'>
-        <div
-          key={'unsorted'}
-          className='square'
-          style={{ background: UNSORTED_COLOR }}
-        >
-          Unsorted Elements
+        <div key={'unsorted'} className='oneColor'>
+          <i
+            class='bi bi-square-fill'
+            style={{ padding: '5px', color: UNSORTED_COLOR }}
+          ></i>
+          Unsorted part of Array
         </div>
-        <div
-          key={'comparison'}
-          className='square'
-          style={{ background: COMPARISON_COLOR }}
-        >
+        <div key={'soted'} className='oneColor'>
+          <i
+            class='bi bi-square-fill'
+            style={{ padding: '5px', color: SORTED_COLOR }}
+          ></i>
+          Sorted part of Array
+        </div>
+        <div key={'comparison'} className='oneColor'>
+          <i
+            class='bi bi-square-fill'
+            style={{ padding: '5px', color: COMPARISON_COLOR }}
+          ></i>
           Comparison Elements
         </div>
-        <div
-          key={'soted'}
-          className='square'
-          style={{ background: SORTED_COLOR }}
-        >
-          Sorted Elements
-        </div>
+
+        {speed > 500 && (
+          <div key={'larger'} className='oneColor'>
+            <i
+              class='bi bi-square-fill'
+              style={{ padding: '5px', color: LARGER_COLOR }}
+            ></i>
+            Larger Element
+          </div>
+        )}
       </div>
       <div className='sortingBars-container'>
         {array &&
