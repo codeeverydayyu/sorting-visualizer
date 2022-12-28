@@ -4,7 +4,10 @@ import Visualizer from './components/Visualizer';
 function App() {
   return (
     <div className='App'>
-      <h1>Sorting Visualizer</h1>
+      <h1>
+        <i class='bi bi-bar-chart-line-fill' style={{ padding: 10 }}></i>Sorting
+        Visualizer
+      </h1>
       <Visualizer />
     </div>
   );

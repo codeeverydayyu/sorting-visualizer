@@ -283,7 +283,7 @@ export default function Visualizer() {
               className='bi bi-square-fill'
               style={{ padding: '5px', color: 'red' }}
             ></i>
-            Key Element
+            Key Value
           </div>
         )}
       </div>
