@@ -4,8 +4,9 @@ import './Visualizer.css';
 const UNSORTED_COLOR = 'gainsboro';
 const COMPARISON_COLOR = 'darkorange';
 const LARGER_COLOR = 'purple';
+const SMALLER_COLOR = 'red';
 const SORTED_COLOR = 'green';
-const DEFAULT_SPEED = 30;
+const DEFAULT_SPEED = 400;
 const SLOW_SPEED = 1000;
 const INITIAL_ARRAYSIZE = 10;
 
@@ -28,7 +29,7 @@ export default function Visualizer() {
     }
     let arr = [];
     for (let i = 0; i < arraySize; i++) {
-      arr.push(Math.floor(Math.random() * 800) + 5);
+      arr.push(Math.floor(Math.random() * 300) + 5);
     }
     setArray(arr);
   };
@@ -84,7 +85,13 @@ export default function Visualizer() {
     arr[y] = temp;
   };
 
-  // Bubble sort algorithm
+  const setColorById = (id, color) => {
+    if (document.getElementById(id) !== null) {
+      document.getElementById(id).style.backgroundColor = color;
+    }
+  };
+
+  /* ---------- Bubbot Sort ---------- */
   const bubbleSort = async () => {
     let bar1, bar2;
     for (let i = 0; i < array.length - 1; i++) {
@@ -142,28 +149,48 @@ export default function Visualizer() {
     // console.log('end: ', array);
   };
 
+  /* ---------- Insertion Sort ---------- */
+  // Implemented different from normal insertion sort algorithm to fulfill visualization.
   const insertionSort = async () => {
-    console.log('choose insertion sort');
     let currentArray = structuredClone(array);
-    console.log(currentArray);
     let testArray = currentArray.slice().sort((a, b) => a - b);
+
+    // * turn first bar to sorted color and wait for a while
+    setColorById(0, SORTED_COLOR);
+    await sleep(speed);
+
     for (let i = 1; i < currentArray.length; i++) {
       let key = currentArray[i];
       let j = i - 1;
+
+      // * turn key bar to red color and wait for a while
+      setColorById(j + 1, 'red');
+      await sleep(speed);
+
       while (j >= 0 && key < currentArray[j]) {
-        // as long as the compared element is larger than key
         currentArray[j + 1] = currentArray[j]; // shift the larger element to the right by 1
+
+        // * not needed to set currentArray[j] in algorithm view, just for visualize purpose,
+        // * show animation of shifting key bar to left and shifting sorted bar to right.
+        currentArray[j] = key;
+        setColorById(j, 'red');
+        setArray([...currentArray]);
+        setColorById(j + 1, SORTED_COLOR);
+        await sleep(speed);
+
         j--; // don't forget to move j to the left by 1, to compare previous previous element
       }
       /* 1. if the key is > current [j], the key finds its position.
       shouldn't shift anymore, stop the while loop, 
-      the key should be in [j+1] position 
-      || since j is updated by -- in previous round, the correct position for key is at j+1*/
+      the key should be in [j+1] position || since j is updated by -- in previous round, the correct position for key is at j+1*/
       currentArray[j + 1] = key;
+      setArray([...currentArray]);
+      setColorById(j + 1, SORTED_COLOR);
+      await sleep(speed);
+      // * every ith round, the bars before i are sorted
+      setColorById(i - 1, SORTED_COLOR);
     }
-
-    console.log(currentArray);
-    console.log(arrayEqual(currentArray, testArray));
+    setColorById(currentArray.length - 1, SORTED_COLOR);
 
     setDisableButton(false);
   };
@@ -237,11 +264,13 @@ export default function Visualizer() {
           </div>
         )}
       </div>
+
       <div className='sortingBars-container'>
         {array &&
           array.map((element, index) => {
             return (
               <div
+                animate={{}}
                 className='bar'
                 id={index}
                 key={index}
