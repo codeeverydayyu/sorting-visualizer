@@ -197,6 +197,18 @@ export default function Visualizer() {
   return (
     <div>
       <div className='button-container'>
+        <button onClick={randomArray} disabled={disapleButton}>
+          Genarate random array
+        </button>
+        <div className='chooseSpeed-container'>
+          <button onClick={slowSpeed} disabled={disapleButton}>
+            Slow speed
+          </button>
+          &nbsp;
+          <button onClick={defaultSpeed} disabled={disapleButton}>
+            Default speed
+          </button>
+        </div>
         <div className='chooseAlgo-container'>
           <button
             value={'bubbleSort'}
@@ -214,30 +226,15 @@ export default function Visualizer() {
             Insertion sort
           </button>
         </div>
-        <div className='chooseSpeed-container'>
-          <button onClick={slowSpeed} disabled={disapleButton}>
-            Slow speed
-          </button>
-          &nbsp;
-          <button onClick={defaultSpeed} disabled={disapleButton}>
-            Default speed
-          </button>
-        </div>
-        <div className='otherButton-container'>
-          <button onClick={randomArray} disabled={disapleButton}>
-            Genarate random array
-          </button>
-          &nbsp;
-          <button
-            onClick={chooseSort}
-            disabled={disapleButton}
-            style={{ color: 'red' }}
-          >
-            Sort!
-          </button>
-          &nbsp;
-          <button onClick={testSort}>Test</button>
-        </div>
+        <button
+          onClick={chooseSort}
+          disabled={disapleButton}
+          style={{ color: 'red' }}
+        >
+          Sort!
+        </button>
+        &nbsp;
+        <button onClick={testSort}>Test</button>
       </div>
 
       <div className='colorSystem-container'>
