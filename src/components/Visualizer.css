@@ -1,8 +1,10 @@
 .colorSystem-container {
   display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   justify-content: center;
-  gap: 2rem;
-  padding: 1rem;
+  padding: 2rem;
+  gap: 1rem;
 }
 
 .sortingBars-container {
@@ -26,14 +28,4 @@
   justify-content: center;
   gap: 2rem;
   padding: 1rem;
-}
-
-.secondBars-container {
-  display: flex;
-  flex-grow: 1;
-  flex-shrink: 1;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 1px;
-  margin-top: 5rem;
 }

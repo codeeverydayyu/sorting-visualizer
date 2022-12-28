@@ -153,7 +153,6 @@ export default function Visualizer() {
   // Implemented different from normal insertion sort algorithm to fulfill visualization.
   const insertionSort = async () => {
     let currentArray = structuredClone(array);
-    let testArray = currentArray.slice().sort((a, b) => a - b);
 
     // * turn first bar to sorted color and wait for a while
     setColorById(0, SORTED_COLOR);
@@ -198,37 +197,47 @@ export default function Visualizer() {
   return (
     <div>
       <div className='button-container'>
-        <button onClick={randomArray} disabled={disapleButton}>
-          Genarate random array
-        </button>
-        <button
-          value={'bubbleSort'}
-          onClick={(e) => setSortFunction(e.target.value)}
-          disabled={disapleButton}
-        >
-          Bubble sort
-        </button>
-        <button
-          value={'insertionSort'}
-          onClick={(e) => setSortFunction(e.target.value)}
-          disabled={disapleButton}
-        >
-          Insertion sort
-        </button>
-        <button onClick={testSort}>Test</button>
-        <button onClick={slowSpeed} disabled={disapleButton}>
-          Slow speed
-        </button>
-        <button onClick={defaultSpeed} disabled={disapleButton}>
-          Default speed
-        </button>
-        <button
-          onClick={chooseSort}
-          disabled={disapleButton}
-          style={{ color: 'red' }}
-        >
-          Sort!
-        </button>
+        <div className='chooseAlgo-container'>
+          <button
+            value={'bubbleSort'}
+            onClick={(e) => setSortFunction(e.target.value)}
+            disabled={disapleButton}
+          >
+            Bubble sort
+          </button>
+          &nbsp;
+          <button
+            value={'insertionSort'}
+            onClick={(e) => setSortFunction(e.target.value)}
+            disabled={disapleButton}
+          >
+            Insertion sort
+          </button>
+        </div>
+        <div className='chooseSpeed-container'>
+          <button onClick={slowSpeed} disabled={disapleButton}>
+            Slow speed
+          </button>
+          &nbsp;
+          <button onClick={defaultSpeed} disabled={disapleButton}>
+            Default speed
+          </button>
+        </div>
+        <div className='otherButton-container'>
+          <button onClick={randomArray} disabled={disapleButton}>
+            Genarate random array
+          </button>
+          &nbsp;
+          <button
+            onClick={chooseSort}
+            disabled={disapleButton}
+            style={{ color: 'red' }}
+          >
+            Sort!
+          </button>
+          &nbsp;
+          <button onClick={testSort}>Test</button>
+        </div>
       </div>
 
       <div className='colorSystem-container'>
@@ -239,6 +248,7 @@ export default function Visualizer() {
           ></i>
           Unsorted part of Array
         </div>
+
         <div key={'soted'} className='oneColor'>
           <i
             className='bi bi-square-fill'
@@ -246,13 +256,16 @@ export default function Visualizer() {
           ></i>
           Sorted part of Array
         </div>
-        <div key={'comparison'} className='oneColor'>
-          <i
-            className='bi bi-square-fill'
-            style={{ padding: '5px', color: COMPARISON_COLOR }}
-          ></i>
-          Comparison Elements
-        </div>
+
+        {sortFunction === 'bubbleSort' && (
+          <div key={'comparison'} className='oneColor'>
+            <i
+              className='bi bi-square-fill'
+              style={{ padding: '5px', color: COMPARISON_COLOR }}
+            ></i>
+            Comparison Elements
+          </div>
+        )}
 
         {sortFunction === 'bubbleSort' && speed > 500 && (
           <div key={'larger'} className='oneColor'>
@@ -261,6 +274,16 @@ export default function Visualizer() {
               style={{ padding: '5px', color: LARGER_COLOR }}
             ></i>
             Larger Element
+          </div>
+        )}
+
+        {sortFunction === 'insertionSort' && (
+          <div key={'insertion'} className='oneColor'>
+            <i
+              className='bi bi-square-fill'
+              style={{ padding: '5px', color: 'red' }}
+            ></i>
+            Key Element
           </div>
         )}
       </div>
