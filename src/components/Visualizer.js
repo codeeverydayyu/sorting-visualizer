@@ -144,6 +144,26 @@ export default function Visualizer() {
 
   const insertionSort = async () => {
     console.log('choose insertion sort');
+    let currentArray = structuredClone(array);
+    console.log(currentArray);
+    let testArray = currentArray.slice().sort((a, b) => a - b);
+    for (let i = 1; i < currentArray.length; i++) {
+      let key = currentArray[i];
+      let j = i - 1;
+      while (j >= 0 && key < currentArray[j]) {
+        // as long as the compared element is larger than key
+        currentArray[j + 1] = currentArray[j]; // shift the larger element to the right by 1
+        j--; // don't forget to move j to the left by 1, to compare previous previous element
+      }
+      /* 1. if the key is > current [j], the key finds its position.
+      shouldn't shift anymore, stop the while loop, 
+      the key should be in [j+1] position 
+      || since j is updated by -- in previous round, the correct position for key is at j+1*/
+      currentArray[j + 1] = key;
+    }
+
+    console.log(currentArray);
+    console.log(arrayEqual(currentArray, testArray));
 
     setDisableButton(false);
   };
@@ -187,30 +207,30 @@ export default function Visualizer() {
       <div className='colorSystem-container'>
         <div key={'unsorted'} className='oneColor'>
           <i
-            class='bi bi-square-fill'
+            className='bi bi-square-fill'
             style={{ padding: '5px', color: UNSORTED_COLOR }}
           ></i>
           Unsorted part of Array
         </div>
         <div key={'soted'} className='oneColor'>
           <i
-            class='bi bi-square-fill'
+            className='bi bi-square-fill'
             style={{ padding: '5px', color: SORTED_COLOR }}
           ></i>
           Sorted part of Array
         </div>
         <div key={'comparison'} className='oneColor'>
           <i
-            class='bi bi-square-fill'
+            className='bi bi-square-fill'
             style={{ padding: '5px', color: COMPARISON_COLOR }}
           ></i>
           Comparison Elements
         </div>
 
-        {speed > 500 && (
+        {sortFunction === 'bubbleSort' && speed > 500 && (
           <div key={'larger'} className='oneColor'>
             <i
-              class='bi bi-square-fill'
+              className='bi bi-square-fill'
               style={{ padding: '5px', color: LARGER_COLOR }}
             ></i>
             Larger Element
