@@ -4,51 +4,100 @@ import './Visualizer.css';
 const UNSORTED_COLOR = 'gainsboro';
 const COMPARISON_COLOR = 'darkorange';
 const LARGER_COLOR = 'purple';
-const SMALLER_COLOR = 'red';
+const KEY_COLOR = 'red';
 const SORTED_COLOR = 'green';
+const MIN_ARRAYSIZ = 8;
+const MAX_ARRAYSIZE = 100;
+const DEFAULT_ARRAYSIZE = 10;
+const DEFAULT_ARRAYSIZE_STEP = 1;
+const MIN_SPEED = 10; // fastest
+const MAX_SPEED = 1010; // slowest
 const DEFAULT_SPEED = 400;
-const SLOW_SPEED = 1000;
-const INITIAL_ARRAYSIZE = 10;
+const DEFAULT_SPEED_STEP = 50;
 
 export default function Visualizer() {
-  const [arraySize, setArraySize] = useState(INITIAL_ARRAYSIZE);
-  const [array, setArray] = useState([]);
-  const [speed, setSpeed] = useState(DEFAULT_SPEED);
-  const [sortFunction, setSortFunction] = useState('');
-  const [disapleButton, setDisableButton] = useState(false);
+  const [sizeSlider, setSizeSlider] = useState({
+    min: MIN_ARRAYSIZ,
+    max: MAX_ARRAYSIZE,
+    step: DEFAULT_ARRAYSIZE_STEP,
+    value: DEFAULT_ARRAYSIZE,
+  });
 
-  // generate a random array
+  const [speedSlider, setSpeedSlider] = useState({
+    min: MIN_SPEED,
+    max: MAX_SPEED,
+    step: DEFAULT_SPEED_STEP,
+    value: DEFAULT_SPEED,
+  });
+  const [disableButton, setDisableButton] = useState(false);
+  const [arraySize, setArraySize] = useState(sizeSlider.value);
+  const [array, setArray] = useState(new Array(arraySize));
+  const [speed, setSpeed] = useState(speedSlider.value);
+  const [sortFunction, setSortFunction] = useState('bubbleSort');
+  const [sorted, setSorted] = useState(false);
+  const { innerWidth } = window;
+  const numWidth = Math.floor(innerWidth / (array.length * 2));
+  const fontSize = numWidth > 30 ? 14 : 0;
+  const [previousArraySize, setPreviousArraySize] = useState(0);
+
+  // generate a random array and set array.
   const randomArray = () => {
+    setSorted(false);
     // check if the element is null to avoid null error
     let check = document.getElementById(0);
-    if (check !== null) {
-      for (let i = 0; i < arraySize; i++) {
+    if (!Object.is(check, null)) {
+      // use previous array size to avoid null error
+      for (let i = 0; i < previousArraySize; i++) {
+        // avoid null error, since the array size is changing when moving array slider.
+        if (Object.is(null, document.getElementById(i))) {
+          break;
+        }
         // set the bars' color to unsorted color every time that generates a new random array
         document.getElementById(i).style.backgroundColor = UNSORTED_COLOR;
       }
     }
+    let randomRange = 300;
+    arraySize < 50 ? (randomRange = 300) : (randomRange = 600);
     let arr = [];
     for (let i = 0; i < arraySize; i++) {
-      arr.push(Math.floor(Math.random() * 300) + 5);
+      arr.push(Math.floor(Math.random() * randomRange) + 5);
     }
     setArray(arr);
   };
 
-  // set random array for the first render
+  // set random array
   useEffect(() => {
-    randomArray();
-  }, []);
+    randomArray(arraySize);
+  }, [arraySize]);
 
-  // control the speed of visualization
-  const slowSpeed = () => {
-    setSpeed(SLOW_SPEED);
-  };
-  const defaultSpeed = () => {
-    setSpeed(DEFAULT_SPEED);
-  };
   // https://stackoverflow.com/questions/58816244/debugging-eslint-warning-function-declared-in-a-loop-contains-unsafe-reference
   const sleep = (speed) => {
     return new Promise((resolve) => setTimeout(resolve, speed));
+  };
+
+  // control array size
+  const updateSize = (data) => {
+    setSizeSlider({
+      min: MIN_ARRAYSIZ,
+      max: MAX_ARRAYSIZE,
+      step: DEFAULT_ARRAYSIZE_STEP,
+      value: data,
+    });
+    setArraySize(data);
+  };
+
+  // control the speed of visualization
+  const updateSpeed = (data) => {
+    setSpeedSlider({
+      min: MIN_SPEED,
+      max: MAX_SPEED,
+      step: DEFAULT_SPEED_STEP,
+      value: data,
+    });
+    setSpeed(MAX_SPEED + MIN_SPEED - data);
+    // console.log('data:', data);
+    // console.log(`${MAX_SPEED} + ${MIN_SPEED} - ${data}`);
+    // console.log('speed: ', speed);
   };
 
   // test results
@@ -65,7 +114,7 @@ export default function Visualizer() {
     // console.log('--------------------------------');
   };
 
-  const chooseSort = () => {
+  const startSort = () => {
     setDisableButton(true);
     switch (sortFunction) {
       case 'bubbleSort':
@@ -79,16 +128,10 @@ export default function Visualizer() {
     }
   };
 
-  const swap = (arr, x, y) => {
-    var temp = arr[x];
-    arr[x] = arr[y];
-    arr[y] = temp;
-  };
-
-  const setColorById = (id, color) => {
-    if (document.getElementById(id) !== null) {
-      document.getElementById(id).style.backgroundColor = color;
-    }
+  const finishSort = () => {
+    setPreviousArraySize(array.length);
+    setSorted(true);
+    setDisableButton(false);
   };
 
   /* ---------- Bubbot Sort ---------- */
@@ -145,8 +188,9 @@ export default function Visualizer() {
       bar1.backgroundColor = SORTED_COLOR;
     }
     // console.log('after bubble sort, the length of array is: ', array.length);
-    setDisableButton(false);
     // console.log('end: ', array);
+    // setDisableButton(false);
+    finishSort();
   };
 
   /* ---------- Insertion Sort ---------- */
@@ -163,7 +207,7 @@ export default function Visualizer() {
       let j = i - 1;
 
       // * turn key bar to red color and wait for a while
-      setColorById(j + 1, 'red');
+      setColorById(j + 1, KEY_COLOR);
       await sleep(speed);
 
       while (j >= 0 && key < currentArray[j]) {
@@ -172,7 +216,7 @@ export default function Visualizer() {
         // * not needed to set currentArray[j] in algorithm view, just for visualize purpose,
         // * show animation of shifting key bar to left and shifting sorted bar to right.
         currentArray[j] = key;
-        setColorById(j, 'red');
+        setColorById(j, KEY_COLOR);
         setArray([...currentArray]);
         setColorById(j + 1, SORTED_COLOR);
         await sleep(speed);
@@ -190,51 +234,75 @@ export default function Visualizer() {
       setColorById(i - 1, SORTED_COLOR);
     }
     setColorById(currentArray.length - 1, SORTED_COLOR);
-
-    setDisableButton(false);
+    // setDisableButton(false);
+    finishSort();
   };
 
   return (
     <div>
-      <div className='button-container'>
-        <button onClick={randomArray} disabled={disapleButton}>
-          Genarate random array
-        </button>
-        <div className='chooseSpeed-container'>
-          <button onClick={slowSpeed} disabled={disapleButton}>
-            Slow speed
-          </button>
-          &nbsp;
-          <button onClick={defaultSpeed} disabled={disapleButton}>
-            Default speed
-          </button>
+      <div className='menu-bar-container'>
+        <div className='brand-container'>
+          <i className='bi bi-bar-chart-line-fill' style={{ padding: 10 }}></i>
+          <div className='brand-text-container'>Sorting Visualizer</div>
         </div>
-        <div className='chooseAlgo-container'>
-          <button
-            value={'bubbleSort'}
-            onClick={(e) => setSortFunction(e.target.value)}
-            disabled={disapleButton}
-          >
-            Bubble sort
+        <div className='button-container'>
+          <button onClick={randomArray} disabled={disableButton}>
+            Genarate random array
           </button>
+          <div className='chooseSpeed-container'>
+            <div className='slider-Container'>
+              <div className='slider-text' disabled={disableButton}>
+                Choose sorting speed
+              </div>
+              <input
+                className='slider-image'
+                type='range'
+                min={speedSlider.min}
+                max={speedSlider.max}
+                step={speedSlider.step}
+                onChange={(e) => updateSpeed(e.target.value)}
+                value={speedSlider.value}
+                disabled={disableButton}
+              />
+              &nbsp;
+              <div className='slider-text' disabled={disableButton}>
+                Choose array size
+              </div>
+              <input
+                className='slider-image'
+                type='range'
+                min={sizeSlider.min}
+                max={sizeSlider.max}
+                onChange={(e) => updateSize(e.target.value)}
+                value={sizeSlider.value}
+                disabled={disableButton}
+              />
+            </div>
+          </div>
+          <div className='chooseAlgo-container'>
+            <select
+              className='chooseAlgo-container'
+              value={sortFunction}
+              onChange={(e) => setSortFunction(e.target.value)}
+              disabled={disableButton}
+            >
+              <option value='bubbleSort'>Bubble sort</option>
+              <option value='insertionSort'>Insertion sort</option>
+            </select>
+          </div>
+          {!sorted && (
+            <button
+              className='sortButton'
+              id='sort'
+              onClick={startSort}
+              disabled={disableButton}
+            >
+              Sort!
+            </button>
+          )}
           &nbsp;
-          <button
-            value={'insertionSort'}
-            onClick={(e) => setSortFunction(e.target.value)}
-            disabled={disapleButton}
-          >
-            Insertion sort
-          </button>
+          <button onClick={testSort}>Test</button>
         </div>
-        <button
-          onClick={chooseSort}
-          disabled={disapleButton}
-          style={{ color: 'red' }}
-        >
-          Sort!
-        </button>
-        &nbsp;
-        <button onClick={testSort}>Test</button>
       </div>
 
       <div className='colorSystem-container'>
@@ -278,7 +346,7 @@ export default function Visualizer() {
           <div key={'insertion'} className='oneColor'>
             <i
               className='bi bi-square-fill'
-              style={{ padding: '5px', color: 'red' }}
+              style={{ padding: '5px', color: KEY_COLOR }}
             ></i>
             Key Value
           </div>
@@ -286,22 +354,25 @@ export default function Visualizer() {
       </div>
 
       <div className='sortingBars-container'>
-        {array &&
-          array.map((element, index) => {
-            return (
-              <div
-                animate={{}}
-                className='bar'
-                id={index}
-                key={index}
-                style={{
-                  height: `${element}px`,
-                }}
-              >
-                {element}
-              </div>
-            );
-          })}
+        {Array.isArray(array)
+          ? array.map((element, index) => {
+              return (
+                <div
+                  animate={{}}
+                  className='bar'
+                  id={index}
+                  key={index}
+                  style={{
+                    width: `${numWidth}px`,
+                    height: `${element}px`,
+                    fontSize: fontSize,
+                  }}
+                >
+                  {element}
+                </div>
+              );
+            })
+          : null}
       </div>
     </div>
   );
@@ -324,3 +395,15 @@ function arrayEqual(array1, array2) {
   }
   return true;
 }
+
+const setColorById = (id, color) => {
+  if (document.getElementById(id) !== null) {
+    document.getElementById(id).style.backgroundColor = color;
+  }
+};
+
+const swap = (arr, x, y) => {
+  var temp = arr[x];
+  arr[x] = arr[y];
+  arr[y] = temp;
+};
