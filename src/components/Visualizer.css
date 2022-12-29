@@ -108,7 +108,3 @@ input[type='range'][disabled]::-webkit-slider-thumb {
 .chooseAlgo-container {
   font-size: 1.1rem;
 }
-
-.slider-image {
-  rotate: 180;
-}

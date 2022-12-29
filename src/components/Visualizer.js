@@ -14,6 +14,7 @@ const MIN_SPEED = 10; // fastest
 const MAX_SPEED = 1010; // slowest
 const DEFAULT_SPEED = 400;
 const DEFAULT_SPEED_STEP = 50;
+const ALGORITHMS = { bubbleSort: 'bubbleSort', insertionSort: 'insertionSort' };
 
 export default function Visualizer() {
   const [sizeSlider, setSizeSlider] = useState({
@@ -33,7 +34,7 @@ export default function Visualizer() {
   const [arraySize, setArraySize] = useState(sizeSlider.value);
   const [array, setArray] = useState(new Array(arraySize));
   const [speed, setSpeed] = useState(speedSlider.value);
-  const [sortFunction, setSortFunction] = useState('bubbleSort');
+  const [sortFunction, setSortFunction] = useState(ALGORITHMS.bubbleSort);
   const [sorted, setSorted] = useState(false);
   const { innerWidth } = window;
   const numWidth = Math.floor(innerWidth / (array.length * 2));
@@ -117,10 +118,10 @@ export default function Visualizer() {
   const startSort = () => {
     setDisableButton(true);
     switch (sortFunction) {
-      case 'bubbleSort':
+      case ALGORITHMS.bubbleSort:
         bubbleSort();
         break;
-      case 'insertionSort':
+      case ALGORITHMS.insertionSort:
         insertionSort();
         break;
       default:
@@ -286,8 +287,8 @@ export default function Visualizer() {
               onChange={(e) => setSortFunction(e.target.value)}
               disabled={disableButton}
             >
-              <option value='bubbleSort'>Bubble sort</option>
-              <option value='insertionSort'>Insertion sort</option>
+              <option value={ALGORITHMS.bubbleSort}>Bubble sort</option>
+              <option value={ALGORITHMS.insertionSort}>Insertion sort</option>
             </select>
           </div>
           {!sorted && (
@@ -322,7 +323,7 @@ export default function Visualizer() {
           Sorted part of Array
         </div>
 
-        {sortFunction === 'bubbleSort' && (
+        {sortFunction === ALGORITHMS.bubbleSort && (
           <div key={'comparison'} className='oneColor'>
             <i
               className='bi bi-square-fill'
@@ -332,7 +333,7 @@ export default function Visualizer() {
           </div>
         )}
 
-        {sortFunction === 'bubbleSort' && speed > 500 && (
+        {sortFunction === ALGORITHMS.bubbleSort && speed > 500 && (
           <div key={'larger'} className='oneColor'>
             <i
               className='bi bi-square-fill'
@@ -342,7 +343,7 @@ export default function Visualizer() {
           </div>
         )}
 
-        {sortFunction === 'insertionSort' && (
+        {sortFunction === ALGORITHMS.insertionSort && (
           <div key={'insertion'} className='oneColor'>
             <i
               className='bi bi-square-fill'
