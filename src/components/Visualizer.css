@@ -22,15 +22,24 @@
 }
 .button-container {
   display: flex;
-  justify-content: space-evenly;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
 }
 .slider-Container {
-  display: inline-flex;
+  gap: 1rem;
+}
+
+.chooseSpeed-container,
+.chooseSize-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .colorSystem-container {
   display: flex;
-
+  flex-wrap: wrap;
   justify-content: center;
   padding: 2rem;
   gap: 1rem;

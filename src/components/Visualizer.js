@@ -295,8 +295,8 @@ export default function Visualizer() {
           <button onClick={randomArray} disabled={disableButton}>
             Genarate random array
           </button>
-          <div className='chooseSpeed-container'>
-            <div className='slider-Container'>
+          <div className='slider-Container'>
+            <div className='chooseSpeed-container'>
               <div className='slider-text' disabled={disableButton}>
                 Choose sorting speed
               </div>
@@ -310,9 +310,10 @@ export default function Visualizer() {
                 value={speedSlider.value}
                 disabled={disableButton}
               />
-              &nbsp;
-              <div className='slider-text' disabled={disableButton}>
-                Choose array size
+              <div className='chooseSize-container'>
+                <div className='slider-text' disabled={disableButton}>
+                  Choose array size
+                </div>
               </div>
               <input
                 className='slider-image'
@@ -347,7 +348,6 @@ export default function Visualizer() {
               Sort!
             </button>
           )}
-          &nbsp;
           <button onClick={testSort}>Test</button>
         </div>
       </div>
@@ -360,7 +360,6 @@ export default function Visualizer() {
           ></i>
           Unsorted part of Array
         </div>
-
         <div key={'soted'} className='oneColor'>
           <i
             className='bi bi-square-fill'
