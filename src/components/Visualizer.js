@@ -4,6 +4,7 @@ import './Visualizer.css';
 const UNSORTED_COLOR = 'gainsboro';
 const COMPARISON_COLOR = 'darkorange';
 const LARGER_COLOR = 'purple';
+const SMALLER_COLOR = 'blue';
 const KEY_COLOR = 'red';
 const SORTED_COLOR = 'green';
 const MIN_ARRAYSIZ = 8;
@@ -14,7 +15,11 @@ const MIN_SPEED = 10; // fastest
 const MAX_SPEED = 1010; // slowest
 const DEFAULT_SPEED = 400;
 const DEFAULT_SPEED_STEP = 50;
-const ALGORITHMS = { bubbleSort: 'bubbleSort', insertionSort: 'insertionSort' };
+const ALGORITHMS = {
+  bubbleSort: 'bubbleSort',
+  insertionSort: 'insertionSort',
+  selectionSort: 'selectionSort',
+};
 
 export default function Visualizer() {
   const [sizeSlider, setSizeSlider] = useState({
@@ -123,6 +128,9 @@ export default function Visualizer() {
         break;
       case ALGORITHMS.insertionSort:
         insertionSort();
+        break;
+      case ALGORITHMS.selectionSort:
+        selectionSort();
         break;
       default:
         break;
@@ -239,6 +247,43 @@ export default function Visualizer() {
     finishSort();
   };
 
+  /* ---------- Selection Sort ---------- */
+  const selectionSort = async () => {
+    for (let i = 0; i < array.length - 1; i++) {
+      let minIndex = i;
+      setColorById(minIndex, KEY_COLOR); // highlight the current minimum element to be key color
+      await sleep(speed);
+      for (let j = i + 1; j < array.length; j++) {
+        // setColorById(minIndex, KEY_COLOR);
+        setColorById(j, COMPARISON_COLOR); // highlight the comparing bar for a while
+        await sleep(speed);
+        if (array[j] < array[minIndex]) {
+          setColorById(minIndex, UNSORTED_COLOR);
+          setColorById(j, KEY_COLOR); // only highlight the smaller one for a while
+          await sleep(speed);
+          minIndex = j;
+        } else {
+          setColorById(minIndex, KEY_COLOR); // only highlight the smaller one for a while
+          setColorById(j, UNSORTED_COLOR);
+          await sleep(speed);
+        }
+      }
+      setColorById(minIndex, KEY_COLOR); // after each pass, highlight the smallest bar in this pass for a while
+      setColorById(i, 'pink'); // highlight the correct position to give a hint to the users
+      await sleep(speed);
+      setColorById(minIndex, UNSORTED_COLOR); // set the smallest bar's previous position to unsorted
+
+      swap(array, i, minIndex); // exchange the smallest bar with the bar in correct position
+      setArray([...array]);
+      setColorById(i, KEY_COLOR); // after exchanging, the smallest bar in correct position i, highlight it for a while
+      await sleep(speed);
+      setColorById(i, SORTED_COLOR); // highlight smallest bar to be sorted color
+      await sleep(speed);
+    }
+    setColorById(array.length - 1, SORTED_COLOR); // highlight last bar to be sorted color, the last bar i = array.length -1 isn't part of the for loop.
+    finishSort();
+  };
+
   return (
     <div>
       <div className='menu-bar-container'>
@@ -289,6 +334,7 @@ export default function Visualizer() {
             >
               <option value={ALGORITHMS.bubbleSort}>Bubble sort</option>
               <option value={ALGORITHMS.insertionSort}>Insertion sort</option>
+              <option value={ALGORITHMS.selectionSort}>Selection sort</option>
             </select>
           </div>
           {!sorted && (
@@ -340,6 +386,34 @@ export default function Visualizer() {
               style={{ padding: '5px', color: LARGER_COLOR }}
             ></i>
             Larger Element
+          </div>
+        )}
+
+        {sortFunction === ALGORITHMS.selectionSort && (
+          <div key={'comparison'} className='oneColor'>
+            <i
+              className='bi bi-square-fill'
+              style={{ padding: '5px', color: COMPARISON_COLOR }}
+            ></i>
+            Comparison Element
+          </div>
+        )}
+        {sortFunction === ALGORITHMS.selectionSort && (
+          <div key={'currentMinumum'} className='oneColor'>
+            <i
+              className='bi bi-square-fill'
+              style={{ padding: '5px', color: KEY_COLOR }}
+            ></i>
+            Current Minimum Element
+          </div>
+        )}
+        {sortFunction === ALGORITHMS.selectionSort && (
+          <div key={'correctPosition'} className='oneColor'>
+            <i
+              className='bi bi-square-fill'
+              style={{ padding: '5px', color: 'pink' }}
+            ></i>
+            The correct position for minimum element
           </div>
         )}
 

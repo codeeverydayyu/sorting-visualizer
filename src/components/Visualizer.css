@@ -30,8 +30,7 @@
 
 .colorSystem-container {
   display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
+
   justify-content: center;
   padding: 2rem;
   gap: 1rem;
