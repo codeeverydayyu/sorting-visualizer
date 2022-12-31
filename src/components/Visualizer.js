@@ -12,13 +12,14 @@ const MAX_ARRAYSIZE = 100;
 const DEFAULT_ARRAYSIZE = 10;
 const DEFAULT_ARRAYSIZE_STEP = 1;
 const MIN_SPEED = 10; // fastest
-const MAX_SPEED = 1010; // slowest
+const MAX_SPEED = 3010; // slowest
 const DEFAULT_SPEED = 400;
 const DEFAULT_SPEED_STEP = 50;
 const ALGORITHMS = {
   bubbleSort: 'bubbleSort',
   insertionSort: 'insertionSort',
   selectionSort: 'selectionSort',
+  mergeSort: 'mergeSort',
 };
 
 export default function Visualizer() {
@@ -110,11 +111,8 @@ export default function Visualizer() {
   const testSort = () => {
     const testArr = structuredClone(array);
     testArr.sort((a, b) => a - b);
-    // console.log('inside testSort:');
-    // console.log('testArr length: ', testArr.length);
-    // console.log('array length: ', array.length);
-    // console.log('testArr: ', testArr);
-    // console.log('array: ', array);
+    console.log('array length: ', array.length);
+    console.log('array: ', array);
     let testResult = arrayEqual(testArr, array);
     console.log('Test result is:', testResult);
     // console.log('--------------------------------');
@@ -131,6 +129,9 @@ export default function Visualizer() {
         break;
       case ALGORITHMS.selectionSort:
         selectionSort();
+        break;
+      case ALGORITHMS.mergeSort:
+        mergeSort();
         break;
       default:
         break;
@@ -284,6 +285,50 @@ export default function Visualizer() {
     finishSort();
   };
 
+  /* ---------- Merge Sort In Place---------- */
+  const mergeSort = async () => {
+    console.log('start merge sort');
+    await sort(array, 0, array.length - 1);
+    console.log('end merge sort');
+    finishSort();
+  };
+  const merge = async (arr, left, mid, right) => {
+    if (arr[mid] <= arr[mid + 1]) return;
+    let i = left,
+      j = mid + 1,
+      k = 0;
+    let auxiArray = new Array(arr.length);
+    if (arr[i] <= arr[j]) {
+      auxiArray[k] = arr[i];
+      k++;
+      i++;
+    } else {
+      auxiArray[k] = arr[j];
+      k++;
+      j++;
+    }
+    while (i <= mid) {
+      auxiArray[k] = arr[i];
+      k++;
+      i++;
+    }
+    while (j <= right) {
+      auxiArray[k] = arr[j];
+      k++;
+      j++;
+    }
+    arr = [...auxiArray];
+    setArray([...arr]);
+  };
+  const sort = async (arr, left, right) => {
+    if (left < right) {
+      let mid = left + Math.floor((right - left) / 2);
+      await sort(arr, left, mid);
+      await sort(arr, mid + 1, right);
+      await merge(arr, left, mid, right);
+    }
+  };
+
   return (
     <div>
       <div className='menu-bar-container'>
@@ -336,6 +381,7 @@ export default function Visualizer() {
               <option value={ALGORITHMS.bubbleSort}>Bubble sort</option>
               <option value={ALGORITHMS.insertionSort}>Insertion sort</option>
               <option value={ALGORITHMS.selectionSort}>Selection sort</option>
+              <option value={ALGORITHMS.mergeSort}>Merge sort</option>
             </select>
           </div>
           {!sorted && (
