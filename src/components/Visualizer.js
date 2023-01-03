@@ -19,6 +19,7 @@ const ALGORITHMS = {
   bubbleSort: 'bubbleSort',
   insertionSort: 'insertionSort',
   selectionSort: 'selectionSort',
+  mergeSort: 'mergeSort',
 };
 
 export default function Visualizer() {
@@ -131,6 +132,9 @@ export default function Visualizer() {
         break;
       case ALGORITHMS.selectionSort:
         selectionSort();
+        break;
+      case ALGORITHMS.mergeSort:
+        mergeSort();
         break;
       default:
         break;
@@ -284,6 +288,60 @@ export default function Visualizer() {
     finishSort();
   };
 
+  /* ---------- Merge Sort (Iterative, In place)---------- */
+  const mergeSort = async () => {
+    console.log(array);
+    await mergeSortHelper(array);
+    finishSort();
+  };
+  const mergeSortHelper = async (arr) => {
+    let leftStart, rightEnd, mid, currentSize;
+    for (
+      currentSize = 1;
+      currentSize < arr.length;
+      currentSize = 2 * currentSize
+    ) {
+      for (
+        leftStart = 0;
+        leftStart < arr.length;
+        leftStart = leftStart + currentSize * 2
+      ) {
+        mid = Math.min(leftStart + currentSize - 1, arr.length - 1);
+        rightEnd = Math.min(leftStart + currentSize * 2 - 1, arr.length - 1);
+        await shiftMerge(arr, leftStart, mid, rightEnd);
+      }
+    }
+  };
+  const shiftMerge = async (arr, l, m, r) => {
+    let start2 = m + 1;
+    if (arr[m] <= arr[start2]) return;
+    while (l <= m && start2 <= r) {
+      setColorById(l, COMPARISON_COLOR);
+      setColorById(start2, COMPARISON_COLOR);
+      await sleep(speed);
+      if (arr[l] <= arr[start2]) {
+        l++;
+        setArray([...arr]);
+        setColorById(l, COMPARISON_COLOR);
+        setColorById(start2, COMPARISON_COLOR);
+        await sleep(speed);
+      } else {
+        // shift [l] ... [start2-1] to the right by 1
+        let temp = arr[start2];
+        for (let k = start2; k > l; k--) {
+          arr[k] = arr[k - 1];
+        }
+        arr[l] = temp;
+        setArray([...arr]);
+        await sleep(speed);
+        // update all the pointers
+        l++;
+        m++;
+        start2++;
+      }
+    }
+  };
+
   return (
     <div>
       <div className='menu-bar-container'>
@@ -336,6 +394,7 @@ export default function Visualizer() {
               <option value={ALGORITHMS.bubbleSort}>Bubble sort</option>
               <option value={ALGORITHMS.insertionSort}>Insertion sort</option>
               <option value={ALGORITHMS.selectionSort}>Selection sort</option>
+              <option value={ALGORITHMS.mergeSort}>Iterative Merge sort</option>
             </select>
           </div>
           {!sorted && (
